@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout — PreVisit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+
+    <!-- Razorpay Checkout SDK — always load from Razorpay's CDN -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ink: #0f1e17;
+            --ink-mid: #3a4a41;
+            --ink-soft: #6b7d73;
+            --sage: #3d7a5c;
+            --sage-mid: #5a9e7a;
+            --sage-pale: #e8f2ec;
+            --gold: #c9943a;
+            --gold-pale: #fdf3e3;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --border: rgba(61, 122, 92, 0.13);
+            --shadow-sm: 0 2px 12px rgba(15, 30, 23, 0.07);
+            --shadow-md: 0 8px 32px rgba(15, 30, 23, 0.10);
+            --shadow-lg: 0 24px 64px rgba(15, 30, 23, 0.14);
+            --r: 10px;
+            --red: #d94f4f;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            height: 64px;
+            background: rgba(250, 247, 242, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            color: var(--ink);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--sage);
+            display: inline-block;
+        }
+
+        .nav-back {
+            margin-left: auto;
+            font-size: 0.83rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--sage);
+        }
+
+        /* ─── PAGE LAYOUT ─── */
+        .checkout-page {
+            min-height: calc(100vh - 64px);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1060px;
+            margin: 0 auto;
+            gap: 0;
+            padding: 3.5rem 2rem;
+        }
+
+        /* ─── LEFT — Order Summary ─── */
+        .order-summary {
+            padding: 2.5rem 3rem 2.5rem 0;
+            border-right: 1px solid var(--border);
+        }
+
+        .os-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: 1.25rem;
+        }
+
+        .os-product {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.1rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.75rem;
+        }
+
+        .os-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--sage-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .os-product-name {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.35rem;
+            color: var(--ink);
+            margin-bottom: 0.3rem;
+        }
+
+        .os-product-desc {
+            font-size: 0.8rem;
+            color: var(--ink-soft);
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        .os-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .os-price-label {
+            font-size: 0.88rem;
+            color: var(--ink-mid);
+            font-weight: 500;
+        }
+
+        .os-price-value {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .os-price-note {
+            font-size: 0.72rem;
+            color: var(--ink-soft);
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .os-includes-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 0.75rem;
+        }
+
+        .os-includes {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .os-includes li {
+            font-size: 0.85rem;
+            color: var(--ink-mid);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .os-includes li::before {
+            content: '✓';
+            color: var(--sage);
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .os-trust {
+            margin-top: 2rem;
+            padding: 1rem 1.25rem;
+            background: var(--sage-pale);
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .os-trust-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .os-trust-text {
+            font-size: 0.8rem;
+            color: var(--sage);
+            line-height: 1.55;
+        }
+
+        .os-trust-text strong {
+            font-weight: 600;
+        }
+
+        /* ─── RIGHT — Checkout Form ─── */
+        .checkout-form-wrap {
+            padding: 2.5rem 0 2.5rem 3rem;
+        }
+
+        .cf-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.8rem;
+            color: var(--ink);
+            margin-bottom: 0.4rem;
+        }
+
+        .cf-subtitle {
+            font-size: 0.88rem;
+            color: var(--ink-soft);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+            margin-bottom: 0.45rem;
+        }
+
+        .form-label span {
+            color: var(--red);
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.92rem;
+            color: var(--ink);
+            background: var(--white);
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .form-input::placeholder {
+            color: rgba(107, 125, 115, 0.45);
+        }
+
+        .form-input:focus {
+            border-color: var(--sage);
+            box-shadow: 0 0 0 3px rgba(61, 122, 92, 0.10);
+        }
+
+        .form-input.error {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(217, 79, 79, 0.10);
+        }
+
+        .form-hint {
+            font-size: 0.73rem;
+            color: var(--ink-soft);
+            margin-top: 0.35rem;
+            font-weight: 300;
+        }
+
+        .form-error-msg {
+            font-size: 0.73rem;
+            color: var(--red);
+            margin-top: 0.35rem;
+            display: none;
+        }
+
+        .form-error-msg.visible {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Phone input with country code */
+        .phone-wrap {
+            display: flex;
+            align-items: stretch;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--white);
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .phone-wrap:focus-within {
+            border-color: var(--sage);
+            box-shadow: 0 0 0 3px rgba(61, 122, 92, 0.10);
+        }
+
+        .phone-wrap.error {
+            border-color: var(--red);
+        }
+
+        .phone-prefix {
+            padding: 0.8rem 0.85rem;
+            background: var(--cream);
+            border-right: 1.5px solid var(--border);
+            font-size: 0.88rem;
+            color: var(--ink-mid);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            user-select: none;
+            gap: 5px;
+        }
+
+        .phone-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.92rem;
+            color: var(--ink);
+            background: transparent;
+            outline: none;
+        }
+
+        .phone-input::placeholder {
+            color: rgba(107, 125, 115, 0.45);
+        }
+
+        /* Pay button */
+        .pay-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background: var(--sage);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(61, 122, 92, 0.28);
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pay-btn:hover:not(:disabled) {
+            background: var(--ink);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(15, 30, 23, 0.22);
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pay-btn-arrow {
+            transition: transform 0.2s;
+        }
+
+        .pay-btn:hover:not(:disabled) .pay-btn-arrow {
+            transform: translateX(3px);
+        }
+
+        /* Spinner inside pay button */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pay-btn.loading .spinner {
+            display: block;
+        }
+
+        .pay-btn.loading .btn-label {
+            display: none;
+        }
+
+        .pay-security {
+            margin-top: 0.85rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--ink-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* ─── GLOBAL ERROR BANNER ─── */
+        .alert {
+            padding: 0.9rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            display: none;
+            align-items: flex-start;
+            gap: 0.7rem;
+        }
+
+        .alert.visible {
+            display: flex;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid rgba(217, 79, 79, 0.22);
+            color: var(--red);
+        }
+
+        /* ─── SUCCESS STATE ─── */
+        .success-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            min-height: 400px;
+        }
+
+        .success-screen.visible {
+            display: flex;
+        }
+
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--sage-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            color: var(--ink);
+            margin-bottom: 0.75rem;
+        }
+
+        .success-body {
+            font-size: 0.93rem;
+            color: var(--ink-soft);
+            line-height: 1.7;
+            max-width: 380px;
+            margin-bottom: 1.75rem;
+            font-weight: 300;
+        }
+
+        .success-pid {
+            font-size: 0.78rem;
+            color: var(--ink-soft);
+            background: var(--cream);
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1.75rem;
+            font-family: monospace;
+        }
+
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--sage);
+            color: var(--white);
+            padding: 0.8rem 1.75rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(61, 122, 92, 0.28);
+        }
+
+        .btn-back-home:hover {
+            background: var(--ink);
+            transform: translateY(-1px);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 760px) {
+            .checkout-page {
+                grid-template-columns: 1fr;
+                padding: 2rem 1.25rem;
+            }
+
+            .order-summary {
+                padding: 0 0 2rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .checkout-form-wrap {
+                padding: 2rem 0 0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 0 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ─── NAV ─── -->
+    <nav>
+        <a href="index.html" class="nav-logo">
+            <span class="nav-logo-dot"></span>PreVisit
+        </a>
+        <a href="index.html" class="nav-back">← Back to home</a>
+    </nav>
+
+    <!-- ─── MAIN ─── -->
+    <div class="checkout-page">
+
+        <!-- LEFT: Order Summary -->
+        <div class="order-summary">
+            <div class="os-eyebrow">Your Order</div>
+
+            <div class="os-product">
+                <div class="os-icon">📋</div>
+                <div>
+                    <div class="os-product-name">The PreVisit Form</div>
+                    <div class="os-product-desc">Professionally designed PDF · Print-ready · Instant delivery to your
+                        inbox</div>
+                </div>
+            </div>
+
+            <div class="os-price-row">
+                <div>
+                    <div class="os-price-label">Total</div>
+                    <div class="os-price-note">One-time · No subscription</div>
+                </div>
+                <div style="text-align:right">
+                    <div class="os-price-value">₹199</div>
+                    <div class="os-price-note">INR</div>
+                </div>
+            </div>
+
+            <div class="os-includes-title">What's included</div>
+            <ul class="os-includes">
+                <li>Professionally designed, print-ready PDF</li>
+                <li>Covers symptoms, history, medications, allergies</li>
+                <li>Fill digitally or by hand</li>
+                <li>Unlimited personal &amp; clinic use</li>
+                <li>Instant delivery to your email inbox</li>
+            </ul>
+
+            <div class="os-trust">
+                <div class="os-trust-icon">🔒</div>
+                <div class="os-trust-text">
+                    <strong>Secure payment powered by Razorpay.</strong> Your card details are never stored on our
+                    servers. Supports UPI, Debit/Credit cards, Net Banking and Wallets.
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Form -->
+        <div class="checkout-form-wrap">
+
+            <!-- Normal form state -->
+            <div id="form-state">
+                <h1 class="cf-title">Complete your purchase</h1>
+                <p class="cf-subtitle">We'll send the PDF to your email right after payment.</p>
+
+                <!-- Global error alert -->
+                <div class="alert alert-error" id="global-error" role="alert">
+                    <span>⚠</span>
+                    <span id="global-error-msg">Something went wrong. Please try again.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Full Name <span>*</span></label>
+                    <input class="form-input" type="text" id="name" placeholder="e.g. Priya Sharma"
+                        autocomplete="name" />
+                    <div class="form-error-msg" id="name-err">Please enter your full name.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address <span>*</span></label>
+                    <input class="form-input" type="email" id="email" placeholder="priya@example.com"
+                        autocomplete="email" />
+                    <div class="form-hint">Your PDF will be sent here after payment.</div>
+                    <div class="form-error-msg" id="email-err">Please enter a valid email address.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number <span>*</span></label>
+                    <div class="phone-wrap" id="phone-wrap">
+                        <div class="phone-prefix">🇮🇳 +91</div>
+                        <input class="phone-input" type="tel" id="phone" placeholder="98765 43210" autocomplete="tel"
+                            maxlength="10" />
+                    </div>
+                    <div class="form-hint">Required for payment confirmation (Razorpay OTP/UPI).</div>
+                    <div class="form-error-msg" id="phone-err">Please enter a valid 10-digit mobile number.</div>
+                </div>
+
+                <button class="pay-btn" id="pay-btn" type="button" onclick="startPayment()">
+                    <span class="spinner" id="spinner"></span>
+                    <span class="btn-label">
+                        Pay ₹199 securely
+                        <span class="pay-btn-arrow">→</span>
+                    </span>
+                </button>
+
+                <p class="pay-security">
+                    🔒 256-bit SSL · Secured by Razorpay
+                </p>
+            </div>
+
+            <!-- Success state (shown after verified payment) -->
+            <div class="success-screen" id="success-state">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Payment successful!</h2>
+                <p class="success-body">
+                    Thank you for your purchase. Your PreVisit form is on its way — check your inbox (and spam folder)
+                    in the next few minutes.
+                </p>
+                <div class="success-pid" id="success-pid">Payment ID: —</div>
+                <a href="index.html" class="btn-back-home">← Back to PreVisit</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────────
+        //  ⚙️  CONFIGURATION
+        //  Point this to wherever your server.js is running.
+        //  During local development: http://localhost:3000
+        //  After deployment: https://your-deployed-domain.com
+        // ─────────────────────────────────────────────
+        const SERVER_BASE = 'http://localhost:3000';
+
+        // ── Helpers ──────────────────────────────────
+        function showError(fieldId, errId) {
+            document.getElementById(fieldId).classList.add('error');
+            document.getElementById(errId).classList.add('visible');
+        }
+        function clearError(fieldId, errId) {
+            document.getElementById(fieldId).classList.remove('error');
+            document.getElementById(errId).classList.remove('visible');
+        }
+        function showGlobalError(msg) {
+            document.getElementById('global-error-msg').textContent = msg;
+            document.getElementById('global-error').classList.add('visible');
+        }
+        function hideGlobalError() {
+            document.getElementById('global-error').classList.remove('visible');
+        }
+        function setLoading(on) {
+            const btn = document.getElementById('pay-btn');
+            btn.disabled = on;
+            btn.classList.toggle('loading', on);
+        }
+
+        // ── Live clear errors on input ───────────────
+        document.getElementById('name').addEventListener('input', () => clearError('name', 'name-err'));
+        document.getElementById('email').addEventListener('input', () => clearError('email', 'email-err'));
+        document.getElementById('phone').addEventListener('input', () => {
+            document.getElementById('phone-wrap').classList.remove('error');
+            document.getElementById('phone-err').classList.remove('visible');
+        });
+
+        // ── Validate form ────────────────────────────
+        function validate() {
+            let ok = true;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!name) { showError('name', 'name-err'); ok = false; }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('email', 'email-err'); ok = false; }
+            if (!phone || !/^\d{10}$/.test(phone)) {
+                document.getElementById('phone-wrap').classList.add('error');
+                document.getElementById('phone-err').classList.add('visible');
+                ok = false;
+            }
+            return ok;
+        }
+
+        // ── Main payment flow ────────────────────────
+        async function startPayment() {
+            hideGlobalError();
+            if (!validate()) return;
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const contact = '+91' + phone;
+
+            setLoading(true);
+
+            try {
+                // ── STEP 1: Ask our server to create a Razorpay order ──
+                const orderRes = await fetch(`${SERVER_BASE}/api/create-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, contact }),
+                });
+
+                if (!orderRes.ok) {
+                    const data = await orderRes.json();
+                    throw new Error(data.error || 'Order creation failed.');
+                }
+
+                const { orderId, amount, currency, keyId } = await orderRes.json();
+
+                // ── STEP 2: Open Razorpay Checkout popup ──
+                const options = {
+                    key: keyId,
+                    amount: amount,          // in paise (19900 = ₹199)
+                    currency: currency,
+                    name: 'PreVisit',
+                    description: 'PreVisit Form – One-time PDF',
+                    image: '',              // 👉 Replace with your logo URL if you have one
+                    order_id: orderId,
+                    prefill: {
+                        name: name,
+                        email: email,
+                        contact: contact,
+                    },
+                    notes: {
+                        product: 'PreVisit Form',
+                    },
+                    theme: {
+                        color: '#3d7a5c',           // matches --sage
+                    },
+                    modal: {
+                        confirm_close: true,
+                        ondismiss: () => {
+                            // User closed the Razorpay popup without paying
+                            setLoading(false);
+                        },
+                    },
+                    // ── STEP 3a: On successful payment ──
+                    handler: async function (response) {
+                        await verifyPayment(response);
+                    },
+                };
+
+                const rzp = new Razorpay(options);
+
+                // ── Handle payment failure inside the popup ──
+                rzp.on('payment.failed', function (response) {
+                    setLoading(false);
+                    showGlobalError(
+                        `Payment failed: ${response.error.description || 'Please try a different payment method.'}`
+                    );
+                });
+
+                rzp.open();
+
+            } catch (err) {
+                setLoading(false);
+                showGlobalError(err.message || 'Could not connect to server. Is it running?');
+            }
+        }
+
+        // ── STEP 3b: Verify the payment signature on the server ──
+        async function verifyPayment(response) {
+            try {
+                const verifyRes = await fetch(`${SERVER_BASE}/api/verify-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                    }),
+                });
+
+                const data = await verifyRes.json();
+
+                if (data.verified) {
+                    // ✅ Show success screen
+                    document.getElementById('form-state').style.display = 'none';
+                    document.getElementById('success-state').classList.add('visible');
+                    document.getElementById('success-pid').textContent =
+                        'Payment ID: ' + response.razorpay_payment_id;
+                } else {
+                    setLoading(false);
+                    showGlobalError('Payment verification failed. Please contact support with your order details.');
+                }
+
+            } catch (err) {
+                setLoading(false);
+                showGlobalError('Could not verify payment. Please contact jeffykristen6@gmail.com with your payment ID.');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

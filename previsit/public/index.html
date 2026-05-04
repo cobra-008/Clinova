@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PreVisit — Never Forget What to Tell Your Doctor</title>
+    <meta name="description"
+        content="A calm, structured pre-visit form that helps patients remember their symptoms and helps doctors save time. Download instantly." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ink: #0f1e17;
+            --ink-mid: #3a4a41;
+            --ink-soft: #6b7d73;
+            --sage: #3d7a5c;
+            --sage-mid: #5a9e7a;
+            --sage-pale: #e8f2ec;
+            --gold: #c9943a;
+            --gold-pale: #fdf3e3;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --border: rgba(61, 122, 92, 0.13);
+            --shadow-sm: 0 2px 12px rgba(15, 30, 23, 0.07);
+            --shadow-md: 0 8px 32px rgba(15, 30, 23, 0.10);
+            --shadow-lg: 0 24px 64px rgba(15, 30, 23, 0.14);
+            --r: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--ink);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── TYPOGRAPHY ─── */
+        .serif {
+            font-family: 'Instrument Serif', serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            line-height: 1.12;
+        }
+
+        /* ─── UTILITIES ─── */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sage);
+            background: var(--sage-pale);
+            border: 1px solid rgba(61, 122, 92, 0.18);
+            padding: 5px 12px;
+            border-radius: 50px;
+        }
+
+        .tag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--sage);
+        }
+
+        .section-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: 0.75rem;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            padding: 0 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            background: rgba(250, 247, 242, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow 0.3s;
+        }
+
+        nav.scrolled {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .nav-logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--sage);
+            display: inline-block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.83rem;
+            font-weight: 500;
+            color: var(--ink-mid);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--sage);
+        }
+
+        .nav-cta {
+            background: var(--ink);
+            color: var(--white) !important;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.83rem !important;
+            font-weight: 500;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--sage) !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--ink);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* ─── HERO ─── */
+        #hero {
+            min-height: 100vh;
+            padding-top: 64px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            background: var(--cream);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 55% 70% at 75% 45%, rgba(61, 122, 92, 0.09) 0%, transparent 65%),
+                radial-gradient(ellipse 35% 45% at 5% 85%, rgba(201, 148, 58, 0.07) 0%, transparent 60%);
+        }
+
+        .hero-left {
+            padding: 5rem 3rem 5rem 5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-tag-row {
+            margin-bottom: 2rem;
+        }
+
+        h1.hero-headline {
+            font-size: clamp(2.6rem, 4.5vw, 5rem);
+            color: var(--ink);
+            margin-bottom: 1.4rem;
+            letter-spacing: -0.01em;
+        }
+
+        h1.hero-headline em {
+            font-style: italic;
+            color: var(--sage);
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--ink-mid);
+            font-weight: 300;
+            max-width: 460px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--sage);
+            color: var(--white);
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(61, 122, 92, 0.28);
+        }
+
+        .btn-primary:hover {
+            background: var(--ink);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(15, 30, 23, 0.22);
+        }
+
+        .btn-primary svg {
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover svg {
+            transform: translateX(3px);
+        }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--ink-mid);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .btn-ghost:hover {
+            color: var(--sage);
+        }
+
+        .hero-microcopy {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-mc-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--ink-soft);
+            font-weight: 400;
+        }
+
+        .hero-mc-icon {
+            color: var(--sage);
+            font-size: 0.85rem;
+        }
+
+        /* Hero Right — Image + UI Overlay */
+        .hero-right {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 4rem 3rem 1rem;
+        }
+
+        .hero-img-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .hero-img-wrap img {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 16px;
+            display: block;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Form UI overlay on hero image */
+        .hero-form-overlay {
+            position: absolute;
+            bottom: -24px;
+            left: -40px;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.25rem 1.4rem;
+            width: 230px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .hfo-head {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hfo-head::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--sage);
+            flex-shrink: 0;
+        }
+
+        .hfo-field {
+            margin-bottom: 0.6rem;
+        }
+
+        .hfo-label {
+            font-size: 0.62rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .hfo-bar {
+            height: 28px;
+            border-radius: 5px;
+            background: var(--cream);
+            border: 1px solid var(--border);
+        }
+
+        .hfo-bar.filled {
+            background: rgba(61, 122, 92, 0.08);
+            border-color: rgba(61, 122, 92, 0.25);
+        }
+
+        .hfo-bar.half {
+            width: 60%;
+        }
+
+        .hfo-check {
+            margin-top: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            background: var(--sage-pale);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--sage);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hero-stat-bubble {
+            position: absolute;
+            top: 32px;
+            right: -24px;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            text-align: center;
+            min-width: 90px;
+        }
+
+        .hsb-num {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            color: var(--sage);
+            line-height: 1;
+        }
+
+        .hsb-label {
+            font-size: 0.65rem;
+            color: var(--ink-soft);
+            font-weight: 500;
+            margin-top: 2px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ─── SECTION COMMON ─── */
+        .section-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 7rem 2.5rem;
+        }
+
+        .section-inner.narrow {
+            max-width: 820px;
+        }
+
+        /* ─── PROBLEM ─── */
+        #problem {
+            background: var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #problem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 50% 60% at 85% 50%, rgba(61, 122, 92, 0.18) 0%, transparent 60%);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .problem-left {
+            position: relative;
+            z-index: 2;
+        }
+
+        .problem-eyebrow {
+            color: var(--sage-mid);
+            margin-bottom: 0.75rem;
+        }
+
+        h2.problem-headline {
+            font-size: clamp(2rem, 3.5vw, 3.4rem);
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        h2.problem-headline em {
+            font-style: italic;
+            color: var(--sage-mid);
+        }
+
+        .problem-quote {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 1.35rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.65);
+            border-left: 3px solid var(--sage-mid);
+            padding-left: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .problem-bullets {
+            list-style: none;
+        }
+
+        .problem-bullets li {
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-weight: 300;
+        }
+
+        .problem-bullets li .pb-icon {
+            color: var(--sage-mid);
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .problem-right {
+            position: relative;
+            z-index: 2;
+        }
+
+        .problem-img {
+            width: 100%;
+            border-radius: 14px;
+            display: block;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
+        }
+
+        .problem-img-caption {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            background: rgba(15, 30, 23, 0.82);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-style: italic;
+        }
+
+        /* ─── SOLUTION ─── */
+        #solution {
+            background: var(--cream);
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .solution-img-wrap {
+            position: relative;
+        }
+
+        .solution-img {
+            width: 100%;
+            border-radius: 14px;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            box-shadow: var(--shadow-lg);
+        }
+
+        h2.solution-headline {
+            font-size: clamp(2rem, 3.2vw, 3.2rem);
+            color: var(--ink);
+            margin-bottom: 1.25rem;
+        }
+
+        h2.solution-headline em {
+            font-style: italic;
+            color: var(--sage);
+        }
+
+        .solution-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--ink-mid);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .solution-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .solution-features li {
+            display: flex;
+            gap: 0.9rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.92rem;
+            color: var(--ink-mid);
+            font-weight: 400;
+            align-items: flex-start;
+        }
+
+        .sf-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--sage-pale);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            color: var(--sage);
+        }
+
+        .sf-text strong {
+            display: block;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 1px;
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        #how {
+            background: var(--white);
+        }
+
+        .how-header {
+            text-align: center;
+            max-width: 560px;
+            margin: 0 auto 4rem;
+        }
+
+        h2.how-headline {
+            font-size: clamp(2rem, 3vw, 3rem);
+            color: var(--ink);
+            margin-bottom: 0.75rem;
+        }
+
+        .how-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .how-steps::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            left: calc(16.66% + 1rem);
+            right: calc(16.66% + 1rem);
+            height: 1px;
+            background: linear-gradient(to right, var(--sage-mid), var(--sage-pale), var(--sage-mid));
+            pointer-events: none;
+        }
+
+        .how-step {
+            background: var(--cream);
+            border-radius: 14px;
+            padding: 2.25rem 2rem;
+            position: relative;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .how-step:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .how-step-num {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sage);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .how-step h3 {
+            font-size: 1.15rem;
+            color: var(--ink);
+            margin-bottom: 0.6rem;
+        }
+
+        .how-step p {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--ink-soft);
+            font-weight: 300;
+        }
+
+        .how-step-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══ NAV ═══ -->
+    <nav id="main-nav">
+        <a href="#hero" class="nav-logo">
+            <span class="nav-logo-dot"></span>PreVisit
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#problem">The Problem</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#preview">The Form</a></li>
+            <li><a href="#vision">Future</a></li>
+            <li><a href="#contact" class="nav-cta">Get the Form</a></li>
+        </ul>
+        <div class="nav-hamburger" id="nav-toggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- ═══ HERO ═══ -->
+    <section id="hero">
+        <div class="hero-glow"></div>
+
+        <div class="hero-left reveal">
+            <div class="hero-tag-row">
+                <span class="tag"><span class="tag-dot"></span>Patient Preparation Tool</span>
+            </div>
+            <h1 class="hero-headline">
+                Never forget what<br>to say to your<br><em>doctor again.</em>
+            </h1>
+            <p class="hero-sub">
+                Anxiety makes us blank out exactly when it matters most. The PreVisit form helps you organise your
+                thoughts before the appointment — so you walk in calm, clear, and confident.
+            </p>
+            <div class="hero-actions">
+                <a href="#preview" class="btn-primary" id="hero-cta">
+                    Download Your Pre-Visit Form
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="#how" class="btn-ghost">See how it works ↓</a>
+            </div>
+            <div class="hero-microcopy">
+                <span class="hero-mc-item"><span class="hero-mc-icon">⏱</span> Takes less than 10 minutes</span>
+                <span class="hero-mc-item"><span class="hero-mc-icon">🗣</span> Helps you communicate clearly</span>
+                <span class="hero-mc-item"><span class="hero-mc-icon">📄</span> Print or fill digitally</span>
+            </div>
+        </div>
+
+        <div class="hero-right reveal" style="transition-delay:0.2s">
+            <div class="hero-img-wrap">
+                <img src="hero_patient.png" alt="Patient calmly filling pre-visit medical form in waiting room" />
+
+                <div class="hero-stat-bubble">
+                    <div class="hsb-num">10</div>
+                    <div class="hsb-label">Minutes<br>to complete</div>
+                </div>
+
+                <div class="hero-form-overlay">
+                    <div class="hfo-head">Pre-Visit Form</div>
+                    <div class="hfo-field">
+                        <div class="hfo-label">Main reason for visit</div>
+                        <div class="hfo-bar filled"></div>
+                    </div>
+                    <div class="hfo-field">
+                        <div class="hfo-label">Symptoms started</div>
+                        <div class="hfo-bar filled half"></div>
+                    </div>
+                    <div class="hfo-field">
+                        <div class="hfo-label">Current medications</div>
+                        <div class="hfo-bar"></div>
+                    </div>
+                    <div class="hfo-check">✓ Ready for your appointment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ PROBLEM ═══ -->
+    <section id="problem">
+        <div class="section-inner">
+            <div class="problem-grid">
+                <div class="problem-left reveal">
+                    <div class="section-eyebrow problem-eyebrow">The Real Problem</div>
+                    <h2 class="problem-headline">You sit in front<br>of the doctor —<br>and <em>forget everything.</em>
+                    </h2>
+                    <blockquote class="problem-quote">
+                        "I had so many things to tell him. But the moment the doctor looked at me, my mind went blank."
+                    </blockquote>
+                    <ul class="problem-bullets">
+                        <li><span class="pb-icon">●</span>Anxiety spikes the moment the consultation begins</li>
+                        <li><span class="pb-icon">●</span>Symptoms felt for weeks get forgotten in seconds</li>
+                        <li><span class="pb-icon">●</span>Doctors waste 8–12 min asking basic repeated questions</li>
+                        <li><span class="pb-icon">●</span>Rushed consultations lead to incomplete diagnoses</li>
+                    </ul>
+                </div>
+                <div class="problem-right reveal" style="transition-delay:0.15s">
+                    <img src="problem_patient.png" alt="Anxious patient waiting before a doctor's appointment"
+                        class="problem-img" />
+                    <div class="problem-img-caption">
+                        "I kept thinking I'd remember — but the waiting room anxiety made everything fuzzy."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ SOLUTION ═══ -->
+    <section id="solution">
+        <div class="section-inner">
+            <div class="solution-grid">
+                <div class="solution-img-wrap reveal">
+                    <img src="form_flatlay.png" alt="PreVisit form on desk with pen — calm and organised"
+                        class="solution-img" />
+                </div>
+                <div class="solution-content reveal" style="transition-delay:0.15s">
+                    <div class="section-eyebrow">The Solution</div>
+                    <h2 class="solution-headline">
+                        A form that<br>organises your<br><em>thoughts for you.</em>
+                    </h2>
+                    <p class="solution-text">
+                        Fill it out calmly — at home, or 10 minutes before your appointment. The PreVisit form walks you
+                        through everything your doctor needs to know, so you can focus on getting better instead of
+                        remembering.
+                    </p>
+                    <ul class="solution-features">
+                        <li>
+                            <div class="sf-icon">📋</div>
+                            <div class="sf-text">
+                                <strong>Structured prompts</strong>
+                                Guided questions that surface symptoms you might otherwise forget.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="sf-icon">🧠</div>
+                            <div class="sf-text">
+                                <strong>Reduces cognitive load</strong>
+                                You don't have to hold everything in your head under pressure.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="sf-icon">🤝</div>
+                            <div class="sf-text">
+                                <strong>Opens better conversations</strong>
+                                Doctors can jump straight to listening and diagnosing.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ HOW IT WORKS ═══ -->
+    <section id="how">
+        <div class="section-inner">
+            <div class="how-header reveal">
+                <div class="section-eyebrow">How It Works</div>
+                <h2 class="how-headline">Three simple steps to a better appointment</h2>
+            </div>
+            <div class="how-steps">
+                <div class="how-step reveal" style="transition-delay:0.1s">
+                    <div class="how-step-icon">📝</div>
+                    <div class="how-step-num">1</div>
+                    <h3>Fill the form</h3>
+                    <p>Download the PDF and fill it out at home or in the waiting room. Clear, calm prompts guide you
+                        through your symptoms, history, and concerns — in under 10 minutes.</p>
+                </div>
+                <div class="how-step reveal" style="transition-delay:0.2s">
+                    <div class="how-step-icon">🏥</div>
+                    <div class="how-step-num">2</div>
+                    <h3>Bring it to your appointment</h3>
+                    <p>Hand it to your doctor at the start of the consultation. They get the full picture immediately —
+                        no repetitive questions, no guessing, no wasted time.</p>
+                </div>
+                <div class="how-step reveal" style="transition-delay:0.3s">
+                    <div class="how-step-icon">💬</div>
+                    <div class="how-step-num">3</div>
+                    <h3>Have a better consultation</h3>
+                    <p>Walk out feeling heard. Your doctor got everything they needed. You didn't forget what mattered.
+                        That's what a good appointment feels like.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ DUAL BENEFIT ═══ -->
+    <section id="dual" style="background:var(--cream)">
+        <div class="section-inner">
+            <div class="reveal" style="text-align:center;max-width:560px;margin:0 auto 3.5rem">
+                <div class="section-eyebrow">Who It Helps</div>
+                <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(2rem,3vw,3rem);color:var(--ink)">Built
+                    for patients.<br>Loved by doctors.</h2>
+            </div>
+            <div class="db-grid">
+                <div class="db-card reveal" style="transition-delay:.1s">
+                    <div class="db-card-top"><img src="hero_patient.png" alt="Patient" class="db-img" />
+                        <div class="db-label"><span class="tag"><span class="tag-dot"></span>For Patients</span></div>
+                    </div>
+                    <div class="db-card-body">
+                        <h3>Walk in with clarity, not anxiety.</h3>
+                        <ul class="db-list">
+                            <li>✓ No more forgetting key symptoms</li>
+                            <li>✓ Feel heard, not rushed</li>
+                            <li>✓ Arrive calm and prepared</li>
+                            <li>✓ Covers history, allergies, medications</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="db-card reveal" style="transition-delay:.2s">
+                    <div class="db-card-top"><img src="dual_benefit.png" alt="Doctor" class="db-img" />
+                        <div class="db-label"><span class="tag"
+                                style="background:var(--gold-pale);color:var(--gold);border-color:rgba(201,148,58,.2)"><span
+                                    class="tag-dot" style="background:var(--gold)"></span>For Doctors</span></div>
+                    </div>
+                    <div class="db-card-body">
+                        <h3>Save 8–12 minutes per consultation.</h3>
+                        <ul class="db-list">
+                            <li>✓ Patient info ready before they sit down</li>
+                            <li>✓ Skip repetitive intake questions</li>
+                            <li>✓ Focus entirely on diagnosis</li>
+                            <li>✓ Structured format, easy to scan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ PREVIEW ═══ -->
+    <section id="preview" style="background:var(--white)">
+        <div class="section-inner">
+            <div class="reveal" style="text-align:center;max-width:540px;margin:0 auto 3.5rem">
+                <div class="section-eyebrow">The Form</div>
+                <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(2rem,3vw,3rem);color:var(--ink)">Real.
+                    Usable. Thoughtfully designed.</h2>
+                <p style="margin-top:.9rem;color:var(--ink-soft);font-size:.95rem;line-height:1.7;font-weight:300">A
+                    single elegant PDF covering everything your doctor needs — nothing more, nothing less.</p>
+            </div>
+            <div class="preview-flex">
+                <div class="pdf-card reveal" style="transition-delay:.05s">
+                    <div class="pdf-card-top"><span class="pdf-page-label">Page 1</span></div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Patient Information</div>
+                        <div class="pdf-line full"></div>
+                        <div class="pdf-line med"></div>
+                        <div class="pdf-line short"></div>
+                    </div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Reason for Visit</div>
+                        <div class="pdf-textarea-mock"></div>
+                    </div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Symptoms</div>
+                        <div class="pdf-line full"></div>
+                        <div class="pdf-line med"></div>
+                    </div>
+                </div>
+                <div class="pdf-card reveal" style="transition-delay:.15s">
+                    <div class="pdf-card-top"><span class="pdf-page-label">Page 2</span></div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Current Medications</div>
+                        <div class="pdf-line med"></div>
+                        <div class="pdf-line short"></div>
+                        <div class="pdf-line full"></div>
+                    </div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Allergies</div>
+                        <div class="pdf-line short"></div>
+                        <div class="pdf-line med"></div>
+                    </div>
+                    <div class="pdf-section-block">
+                        <div class="pdf-sec-name">Medical History</div>
+                        <div class="pdf-textarea-mock"></div>
+                    </div>
+                </div>
+                <div class="preview-buy reveal" style="transition-delay:.25s">
+                    <div class="preview-badge">⭐ Current Version</div>
+                    <h3
+                        style="font-family:'Instrument Serif',serif;font-size:1.75rem;color:var(--ink);margin:.75rem 0 .5rem">
+                        The PreVisit Form</h3>
+                    <div class="price-row"><span class="price-main">₹199</span><span class="price-note">one-time ·
+                            instant PDF</span></div>
+                    <ul class="inc-list">
+                        <li>Professionally designed, print-ready PDF</li>
+                        <li>Covers symptoms, history, medications, allergies</li>
+                        <li>Fill digitally or by hand</li>
+                        <li>Unlimited personal &amp; clinic use</li>
+                        <li>Instant delivery to inbox</li>
+                    </ul>
+                    <a href="checkout.html" class="btn-primary" style="width:100%;justify-content:center"
+                        id="buy-cta">Purchase &amp;
+                        Download →</a>
+                    <p style="font-size:.75rem;color:var(--ink-soft);margin-top:.9rem;text-align:center">Questions?
+                        jeffykristen6@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FUTURE VISION ═══ -->
+    <section id="vision" style="background:var(--ink);position:relative;overflow:hidden">
+        <div
+            style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 10% 50%,rgba(61,122,92,.22) 0%,transparent 60%)">
+        </div>
+        <div class="section-inner narrow reveal" style="position:relative;z-index:2;text-align:center">
+            <span class="tag"
+                style="background:rgba(61,122,92,.15);color:var(--sage-mid);border-color:rgba(61,122,92,.25);margin-bottom:1.5rem;display:inline-flex"><span
+                    class="tag-dot" style="background:var(--sage-mid)"></span>Coming Soon</span>
+            <h2
+                style="font-family:'Instrument Serif',serif;font-size:clamp(2rem,3.5vw,3.5rem);color:var(--white);margin-bottom:1.25rem">
+                Smart forms tailored to<br><em style="color:var(--sage-mid)">your exact symptoms.</em></h2>
+            <p
+                style="font-size:1.05rem;color:rgba(255,255,255,.6);line-height:1.8;max-width:580px;margin:0 auto 3rem;font-weight:300">
+                We're building AI that reads your symptoms and generates a personalised pre-visit form — specific to
+                your visit type, your history, and what your doctor needs to know most.</p>
+            <div class="vision-cards">
+                <div class="vision-card">
+                    <div class="vc-icon">🧬</div>
+                    <h4>Symptom-aware questions</h4>
+                    <p>Questions change based on what you're experiencing — not a one-size-fits-all list.</p>
+                </div>
+                <div class="vision-card">
+                    <div class="vc-icon">🏥</div>
+                    <h4>Visit-type personalisation</h4>
+                    <p>Cardiology follow-up? First-time GP? Each form is tailored to the exact type of visit.</p>
+                </div>
+                <div class="vision-card">
+                    <div class="vc-icon">⚡</div>
+                    <h4>Instant generation</h4>
+                    <p>Answer 3 questions. Get a complete, ready-to-print form in under 60 seconds.</p>
+                </div>
+            </div>
+            <p style="margin-top:2.5rem;font-size:.85rem;color:rgba(255,255,255,.4)">Want early access? <a
+                    href="mailto:jeffykristen6@gmail.com?subject=PreVisit AI Early Access"
+                    style="color:var(--sage-mid);text-decoration:none;font-weight:500">Join the waitlist →</a></p>
+        </div>
+    </section>
+
+    <!-- ═══ TRUST ═══ -->
+    <section id="trust" style="background:var(--cream)">
+        <div class="section-inner" style="text-align:center">
+            <div class="section-eyebrow reveal">Trusted By</div>
+            <h2 class="reveal"
+                style="font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,2.8vw,2.8rem);color:var(--ink);margin-bottom:.75rem">
+                Used by patients across India.</h2>
+            <p class="reveal"
+                style="color:var(--ink-soft);font-size:.95rem;max-width:480px;margin:0 auto 3rem;font-weight:300">Doctor
+                testimonials coming soon. Early users are already walking into appointments feeling prepared.</p>
+            <div class="trust-stats reveal">
+                <div class="ts">
+                    <div class="ts-num">10</div>
+                    <div class="ts-label">Minutes to fill</div>
+                </div>
+                <div class="ts-div"></div>
+                <div class="ts">
+                    <div class="ts-num">8–12</div>
+                    <div class="ts-label">Min saved per consult</div>
+                </div>
+                <div class="ts-div"></div>
+                <div class="ts">
+                    <div class="ts-num">100%</div>
+                    <div class="ts-label">Printable &amp; reusable</div>
+                </div>
+                <div class="ts-div"></div>
+                <div class="ts">
+                    <div class="ts-num">₹99</div>
+                    <div class="ts-label">One-time, no subscription</div>
+                </div>
+            </div>
+            <div class="trust-quote reveal">
+                <p class="tq-text">"When a patient arrives prepared, the entire consultation becomes more meaningful —
+                    for both of us."</p>
+                <p class="tq-attr">— The insight behind PreVisit</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FINAL CTA ═══ -->
+    <section id="cta" style="background:var(--sage);position:relative;overflow:hidden">
+        <div
+            style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 90% 50%,rgba(255,255,255,.07) 0%,transparent 60%)">
+        </div>
+        <div class="section-inner narrow reveal" style="position:relative;z-index:2;text-align:center">
+            <h2
+                style="font-family:'Instrument Serif',serif;font-size:clamp(2rem,3.5vw,3.5rem);color:var(--white);margin-bottom:1rem">
+                Walk into your next appointment<br><em style="opacity:.82">prepared.</em></h2>
+            <p
+                style="font-size:1.05rem;color:rgba(255,255,255,.78);line-height:1.75;max-width:480px;margin:0 auto 2.5rem;font-weight:300">
+                Stop leaving the doctor's office wishing you had said something. The PreVisit form gives you the
+                structure to say everything that matters.</p>
+            <a href="mailto:jeffykristen6@gmail.com?subject=PreVisit Form - Purchase&body=Hi, I'd like to purchase the PreVisit Form."
+                class="btn-cta-white" id="final-cta">Download Your Pre-Visit Form →</a>
+            <p style="margin-top:1.5rem;font-size:.8rem;color:rgba(255,255,255,.55)">One-time ₹99 · Instant PDF · No
+                subscription</p>
+        </div>
+    </section>
+
+    <!-- ═══ CONTACT ═══ -->
+    <section id="contact" style="background:var(--ink)">
+        <div class="section-inner">
+            <div class="contact-grid">
+                <div class="reveal">
+                    <div class="section-eyebrow" style="color:var(--sage-mid)">Get in Touch</div>
+                    <h2
+                        style="font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3vw,3rem);color:var(--white);margin-bottom:1rem">
+                        Have a question<br><em style="color:var(--sage-mid)">or want to order?</em></h2>
+                    <p
+                        style="font-size:.95rem;color:rgba(255,255,255,.55);line-height:1.8;font-weight:300;margin-bottom:1.75rem;max-width:380px">
+                        Whether you're a patient, a clinic, or a practice manager — reach out and I'll get back to you
+                        promptly.</p>
+                    <a href="mailto:jeffykristen6@gmail.com" class="contact-email-link">✉ jeffykristen6@gmail.com</a>
+                </div>
+                <div class="contact-form-box reveal" style="transition-delay:.15s">
+                    <div class="cf-field"><label>Your Name</label><input type="text" id="cf-name"
+                            placeholder="Your name" /></div>
+                    <div class="cf-field"><label>Email</label><input type="email" id="cf-email"
+                            placeholder="you@example.com" /></div>
+                    <div class="cf-field"><label>Message</label><textarea id="cf-msg" rows="4"
+                            placeholder="I'd like to know more about the PreVisit form..."></textarea></div>
+                    <button class="cf-submit" onclick="handleContact()">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+        <div class="footer-logo"><span
+                style="width:8px;height:8px;border-radius:50%;background:var(--sage-mid);display:inline-block;margin-right:6px"></span>PreVisit
+        </div>
+        <p class="footer-copy">© 2026 PreVisit · Helping patients communicate better.</p>
+        <div class="footer-links"><a href="mailto:jeffykristen6@gmail.com">Contact</a><a href="#vision">Roadmap</a>
+        </div>
+    </footer>
+
+    <style>
+        .db-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.75rem
+        }
+
+        .db-card {
+            background: var(--white);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            transition: transform .3s, box-shadow .3s
+        }
+
+        .db-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md)
+        }
+
+        .db-card-top {
+            position: relative;
+            height: 220px;
+            overflow: hidden
+        }
+
+        .db-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: brightness(.88)
+        }
+
+        .db-label {
+            position: absolute;
+            bottom: 14px;
+            left: 14px
+        }
+
+        .db-card-body {
+            padding: 1.75rem
+        }
+
+        .db-card-body h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            color: var(--ink);
+            margin-bottom: 1rem
+        }
+
+        .db-list {
+            list-style: none
+        }
+
+        .db-list li {
+            font-size: .88rem;
+            color: var(--ink-mid);
+            padding: .45rem 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .preview-flex {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.1fr;
+            gap: 1.5rem;
+            align-items: start
+        }
+
+        .pdf-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: transform .3s, box-shadow .3s
+        }
+
+        .pdf-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md)
+        }
+
+        .pdf-card-top {
+            background: var(--ink);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end
+        }
+
+        .pdf-page-label {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .5);
+            letter-spacing: .08em;
+            text-transform: uppercase
+        }
+
+        .pdf-section-block {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .pdf-sec-name {
+            font-size: .65rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: .6rem
+        }
+
+        .pdf-line {
+            height: 7px;
+            border-radius: 3px;
+            background: var(--cream);
+            margin-bottom: .4rem
+        }
+
+        .pdf-line.full {
+            width: 100%
+        }
+
+        .pdf-line.med {
+            width: 75%
+        }
+
+        .pdf-line.short {
+            width: 50%
+        }
+
+        .pdf-textarea-mock {
+            height: 52px;
+            background: var(--cream);
+            border-radius: 5px
+        }
+
+        .preview-buy {
+            background: var(--cream);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm)
+        }
+
+        .preview-badge {
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: var(--gold-pale);
+            border: 1px solid rgba(201, 148, 58, .2);
+            border-radius: 50px;
+            display: inline-block;
+            padding: 4px 12px;
+            margin-bottom: .75rem
+        }
+
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            gap: .6rem;
+            margin: 1rem 0
+        }
+
+        .price-main {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.8rem;
+            color: var(--ink);
+            line-height: 1
+        }
+
+        .price-note {
+            font-size: .82rem;
+            color: var(--ink-soft)
+        }
+
+        .inc-list {
+            list-style: none;
+            margin: 1rem 0 1.5rem
+        }
+
+        .inc-list li {
+            font-size: .88rem;
+            color: var(--ink-mid);
+            padding: .5rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: .6rem
+        }
+
+        .inc-list li::before {
+            content: '✓';
+            color: var(--sage);
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .vision-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 2rem
+        }
+
+        .vision-card {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            padding: 1.75rem;
+            text-align: left;
+            transition: background .3s
+        }
+
+        .vision-card:hover {
+            background: rgba(255, 255, 255, .09)
+        }
+
+        .vc-icon {
+            font-size: 1.5rem;
+            margin-bottom: .75rem
+        }
+
+        .vision-card h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.05rem;
+            color: var(--white);
+            margin-bottom: .5rem
+        }
+
+        .vision-card p {
+            font-size: .85rem;
+            color: rgba(255, 255, 255, .5);
+            line-height: 1.65;
+            font-weight: 300
+        }
+
+        .trust-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem
+        }
+
+        .ts-div {
+            width: 1px;
+            height: 40px;
+            background: var(--border)
+        }
+
+        .ts-num {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.2rem;
+            color: var(--sage);
+            line-height: 1;
+            margin-bottom: .2rem
+        }
+
+        .ts-label {
+            font-size: .75rem;
+            color: var(--ink-soft);
+            font-weight: 500
+        }
+
+        .trust-quote {
+            max-width: 560px;
+            margin: 0 auto;
+            border-left: 3px solid var(--sage);
+            padding: 1.25rem 1.5rem;
+            background: var(--white);
+            border-radius: 0 10px 10px 0;
+            text-align: left;
+            box-shadow: var(--shadow-sm)
+        }
+
+        .tq-text {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--ink-mid);
+            line-height: 1.6;
+            margin-bottom: .6rem
+        }
+
+        .tq-attr {
+            font-size: .8rem;
+            color: var(--ink-soft);
+            letter-spacing: .04em
+        }
+
+        .btn-cta-white {
+            display: inline-block;
+            background: var(--white);
+            color: var(--sage);
+            font-weight: 700;
+            font-size: .95rem;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all .25s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .15)
+        }
+
+        .btn-cta-white:hover {
+            background: var(--ink);
+            color: var(--white);
+            transform: translateY(-2px)
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start
+        }
+
+        .contact-email-link {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.1rem;
+            color: var(--sage-mid);
+            text-decoration: none
+        }
+
+        .contact-email-link:hover {
+            color: var(--white)
+        }
+
+        .contact-form-box {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(8px)
+        }
+
+        .cf-field {
+            margin-bottom: 1.1rem
+        }
+
+        .cf-field label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .4);
+            margin-bottom: .4rem
+        }
+
+        .cf-field input,
+        .cf-field textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 6px;
+            padding: .8rem 1rem;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            transition: border-color .25s;
+            resize: none
+        }
+
+        .cf-field input:focus,
+        .cf-field textarea:focus {
+            border-color: var(--sage-mid)
+        }
+
+        .cf-field input::placeholder,
+        .cf-field textarea::placeholder {
+            color: rgba(255, 255, 255, .22)
+        }
+
+        .cf-submit {
+            width: 100%;
+            background: var(--sage);
+            color: var(--white);
+            border: none;
+            padding: .9rem;
+            font-family: 'Inter', sans-serif;
+            font-size: .88rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .2s, transform .2s
+        }
+
+        .cf-submit:hover {
+            background: var(--sage-mid);
+            transform: translateY(-1px)
+        }
+
+        footer {
+            padding: 1.75rem 2.5rem;
+            background: #0a130d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem
+        }
+
+        .footer-logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, .45);
+            display: flex;
+            align-items: center
+        }
+
+        .footer-copy {
+            font-size: .75rem;
+            color: rgba(255, 255, 255, .3)
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem
+        }
+
+        .footer-links a {
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .35);
+            text-decoration: none;
+            transition: color .2s
+        }
+
+        .footer-links a:hover {
+            color: var(--sage-mid)
+        }
+
+        @media(max-width:900px) {
+            nav {
+                padding: 0 1.25rem
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: var(--cream);
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 1rem;
+                border-bottom: 1px solid var(--border);
+                z-index: 199
+            }
+
+            .nav-links.open {
+                display: flex
+            }
+
+            .nav-hamburger {
+                display: flex
+            }
+
+            #hero {
+                grid-template-columns: 1fr
+            }
+
+            .hero-left {
+                padding: 3.5rem 1.5rem 2rem
+            }
+
+            .hero-right {
+                display: none
+            }
+
+            .problem-grid,
+            .solution-grid,
+            .db-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem
+            }
+
+            .how-steps {
+                grid-template-columns: 1fr
+            }
+
+            .how-steps::before {
+                display: none
+            }
+
+            .preview-flex {
+                grid-template-columns: 1fr
+            }
+
+            .vision-cards {
+                grid-template-columns: 1fr
+            }
+
+            .trust-stats {
+                gap: 1.25rem
+            }
+
+            .ts-div {
+                display: none
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+                gap: .75rem;
+                padding: 1.5rem
+            }
+
+            .section-inner {
+                padding: 4.5rem 1.5rem
+            }
+        }
+    </style>
+
+    <script>
+        const nav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+        document.getElementById('nav-toggle').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('open');
+        });
+        document.querySelectorAll('#nav-links a').forEach(a => a.addEventListener('click', () => {
+            document.getElementById('nav-links').classList.remove('open');
+        }));
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+        function handleContact() {
+            const n = document.getElementById('cf-name').value;
+            const e = document.getElementById('cf-email').value;
+            const m = document.getElementById('cf-msg').value;
+            if (!n || !e || !m) { alert('Please fill in all fields.'); return; }
+            window.location.href = `mailto:jeffykristen6@gmail.com?subject=PreVisit Inquiry from ${encodeURIComponent(n)}&body=${encodeURIComponent(m)}%0A%0AFrom: ${encodeURIComponent(n)} (${encodeURIComponent(e)})`;
+        }
+    </script>
+
+</body>
+
+</html>
